@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "dependencies": {
+    "@fontsource/geist-mono": "^5.2.7",
+    "@fontsource/geist-sans": "^5.2.5"
+  },
+  "devDependencies": {
+    "tw-animate-css": "1.3.3",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,304 @@
+<Layouts.app flash={@flash}>
+  <div>
+    <div id="smart-meter" class="flex justify-center">
+      <div class="relative">
+        <div class="relative w-[320px] sm:w-[380px] bg-[#f5f5f0] rounded-lg shadow-2xl border-2 border-[#d4d4c8]">
+          <div class="px-6 pt-5 pb-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono text-[#666] tracking-wider">SMART METER</span>
+              <span class="text-[10px] font-mono text-[#666] tracking-wider">TYPE</span>
+            </div>
+            <div class="flex items-center justify-between mt-0.5">
+              <span class="text-xs font-bold text-[#333] tracking-tight">DSMR 5.0</span>
+              <span class="text-[10px] font-mono text-[#555]">P1-READER</span>
+            </div>
+          </div>
+
+          <div class="mx-4 mb-4">
+            <div class="bg-[#2a3f2a] rounded-sm p-4 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)] border border-[#1a2f1a]">
+              <div
+                id="meter-display"
+                class="font-mono text-[#7fff7f] drop-shadow-[0_0_4px_rgba(127,255,127,0.5)] transition-opacity duration-150"
+              >
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-[#3a5f3a]">
+                  <span class="text-[9px] text-[#5fdf5f] opacity-70">TARIFF</span>
+                  <div class="flex items-center gap-2">
+                    <.tariff_indicator active?={@current_tariff == 1} label="T1" />
+                    <.tariff_indicator active?={@current_tariff == 2} label="T2" />
+                  </div>
+                </div>
+                <div class="text-[10px] sm:text-xs tracking-wide truncate opacity-90">
+                  {@current_reading.description}
+                </div>
+                <div class="text-[9px] sm:text-[10px] text-[#5fdf5f] mt-1 opacity-70">
+                  OBIS: <span>{@current_reading.obis}</span>
+                </div>
+                <div class="text-xl sm:text-2xl font-bold mt-2 tracking-wider">
+                  <span>{@current_reading.value}</span>
+                  <span class="text-sm sm:text-base ml-2 opacity-80">
+                    {@current_reading.unit}
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center mt-3 pt-2 border-t border-[#3a5f3a]">
+                <div class="flex gap-1">
+                  <%= for {_reading, index} <- Enum.with_index(@meter_readings) do %>
+                    <.reading_dot active?={index == @current_index} />
+                  <% end %>
+                </div>
+                <span class="text-[8px] text-[#5fdf5f] opacity-60">
+                  <span>{@current_index + 1}</span>/<span>{length(@meter_readings)}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-4 pb-4">
+            <div class="flex items-center justify-between">
+              <div class="flex gap-3">
+                <div class="flex items-center gap-1.5">
+                  <div class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75">
+                    </span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </div>
+                  <span class="text-[7px] font-mono text-[#666]">1000 imp/kWh</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <.connection_light connected?={@is_connected} />
+                  <span class="text-[8px] font-mono text-[#666]">P1</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                id="cycle-meter-reading"
+                phx-click="cycle_reading"
+                class="relative w-8 h-8 rounded-full bg-gradient-to-b from-[#4a4a4a] to-[#2a2a2a] border-2 border-[#1a1a1a] shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] active:shadow-[0_1px_2px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(0,0,0,0.2)] active:translate-y-[1px] transition-all duration-75 hover:from-[#5a5a5a] hover:to-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-[#666] focus:ring-offset-2 focus:ring-offset-[#f5f5f0] phx-click-loading:opacity-70 flex items-center justify-center"
+                aria-label="Cycle through meter readings"
+              >
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-[#e8e8e0] rounded-b-lg px-4 py-3 border-t border-[#c4c4b8]">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-6 bg-[#333] rounded-sm border border-[#222] flex items-center justify-center shadow-inner">
+                  <div class="w-6 h-3 bg-[#1a1a1a] rounded-sm"></div>
+                </div>
+                <span class="text-[9px] font-mono text-[#666]">P1 PORT</span>
+              </div>
+
+              <div class="text-right">
+                <span class="text-[7px] font-mono text-[#888] block">S/N</span>
+                <span class="text-[9px] font-mono text-[#555]">4530303437</span>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-3 border-t border-[#c4c4b8]">
+              <div class="flex justify-between">
+                <div class="space-y-0.5">
+                  <div class="text-[8px] font-mono text-[#555]">
+                    <span class="text-[#888]">TYPE:</span> ESMR 5.0
+                  </div>
+                  <div class="text-[8px] font-mono text-[#555]">3x230/400V 0,25-5(100)A</div>
+                  <div class="mt-1.5 flex items-center gap-1">
+                    <div class="flex gap-[1px]">
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-px"></div>
+                      <div class="bg-[#333] h-4 w-[2px]"></div>
+                    </div>
+                  </div>
+                  <div class="text-[7px] font-mono text-[#666] tracking-wider">4530303131031</div>
+                </div>
+
+                <div class="text-right space-y-0.5">
+                  <div class="text-[8px] font-mono text-[#555]">50Hz EN 50470-3</div>
+                  <div class="text-[8px] font-mono text-[#555]">
+                    <span class="text-[#888]">S/N:</span> 45303031
+                  </div>
+                  <div class="text-[8px] font-mono text-[#555]">
+                    <span class="text-[#888]">Fab. Year:</span> 2023
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between mt-4 pt-3 border-t border-[#c4c4b8]">
+              <div class="w-3 h-3 rounded-full bg-[#c4c4b8] shadow-[inset_0_1px_3px_rgba(0,0,0,0.3)]">
+              </div>
+              <div class="w-3 h-3 rounded-full bg-[#c4c4b8] shadow-[inset_0_1px_3px_rgba(0,0,0,0.3)]">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="text-center text-xs text-muted-foreground font-mono mt-8">
+      Press the button to cycle through readings ↑
+    </p>
+  </div>
+
+  <div class="mt-24 px-4">
+    <div class="prose prose-neutral prose-sm md:prose-base mx-auto">
+      <div class="space-y-16">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <h3 class="text-lg font-bold font-mono uppercase tracking-tight m-0 text-neutral-900">
+              What is this?
+            </h3>
+          </div>
+          <p class="text-neutral-600 leading-relaxed">
+            In the Netherlands and Belgium, modern "Smart Meters" feature a physical <strong>P1 Port</strong>. This port outputs live electricity and gas usage data to devices like Home Assistant or custom energy displays.
+          </p>
+          <p class="text-neutral-600 leading-relaxed mt-4">
+            <strong>p1meter.dev</strong>
+            is a virtual version of that port. It provides a live stream of simulated data that mimics the standard
+            <strong>DSMR 5.0</strong>
+            protocol. Use it to build and test your energy management software without needing to be near a physical meter.
+          </p>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75">
+              </span><span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </div>
+            <h3 class="text-lg font-bold font-mono uppercase tracking-tight m-0 text-neutral-900">
+              How to Connect
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-8">
+            <div class="border border-neutral-200 rounded-lg p-5 bg-neutral-50 flex flex-col shadow-sm">
+              <span class="text-xs font-mono font-bold uppercase text-neutral-400 tracking-wider mb-4">
+                Stream Endpoint
+              </span>
+              <ul class="space-y-3 font-mono text-xs md:text-sm text-neutral-800 flex-grow">
+                <li class="flex justify-between border-b border-neutral-200/60 pb-2">
+                  <span class="text-neutral-500">Host</span><span class="font-bold">p1meter.dev</span>
+                </li>
+                <li class="flex justify-between border-b border-neutral-200/60 pb-2">
+                  <span class="text-neutral-500">Port</span><span class="font-bold">8080</span>
+                </li>
+                <li class="flex justify-between border-b border-neutral-200/60 pb-2">
+                  <span class="text-neutral-500">Protocol</span><span>TCP/IP Raw</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-neutral-500">Standard</span><span>DSMR 5.0</span>
+                </li>
+              </ul>
+            </div>
+            <div class="border border-neutral-200 rounded-lg p-5 bg-neutral-50 flex flex-col shadow-sm">
+              <span class="text-xs font-mono font-bold uppercase text-neutral-400 tracking-wider mb-4">
+                Instant Preview
+              </span>
+              <p class="text-xs text-neutral-500 mb-3 leading-relaxed">
+                Run this in your terminal to see the raw data stream instantly:
+              </p>
+              <div class="rounded-lg overflow-hidden shadow-lg flex-grow flex flex-col">
+                <div class="bg-neutral-800 px-4 py-2 flex items-center gap-2">
+                  <div class="flex gap-1.5">
+                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                  </div>
+                  <span class="text-neutral-500 text-xs font-mono ml-2">terminal</span>
+                </div>
+                <div class="bg-neutral-900 p-4 text-green-400 font-mono text-xs flex-grow flex items-center">
+                  <code>$ nc p1meter.dev 8080</code>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-400 mt-3 font-mono text-center">
+                New data packet every 10 seconds.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-mono uppercase tracking-tight mb-4 text-neutral-900">
+            Data Format (The "Telegram")
+          </h3>
+          <p class="text-neutral-600 leading-relaxed">
+            In the smart meter world, a <strong>Telegram</strong>
+            is simply a text packet containing all current readings. The text below is exactly what your app will receive from our server.
+          </p>
+          <div class="rounded-lg overflow-hidden shadow-lg mt-6 border border-neutral-200">
+            <div class="bg-neutral-100 px-4 py-2 flex items-center justify-between border-b border-neutral-200">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-neutral-500 text-xs font-mono">DSMR 5.0 Telegram</span>
+              </div>
+              <span class="text-neutral-400 text-xs font-mono">raw output</span>
+            </div>
+            <pre
+              id="raw-telegram"
+              class="text-xs font-mono text-neutral-600 whitespace-pre leading-relaxed p-4 bg-white overflow-x-auto"
+            ><code>{@raw_telegram}</code></pre>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-mono uppercase tracking-tight mb-4 text-neutral-900">
+            Developer Example (Node.js)
+          </h3>
+          <div class="rounded-lg overflow-hidden shadow-lg border border-neutral-200">
+            <div class="bg-neutral-800 px-4 py-2 flex items-center gap-2">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+              </div>
+              <span class="text-neutral-500 text-xs font-mono ml-2">client.js</span>
+            </div>
+            <pre class="text-xs font-mono text-neutral-300 leading-relaxed p-4 bg-neutral-900 overflow-x-auto"><code>{"const net = require('net');
+
+const client = new net.Socket();
+client.connect(8080, 'p1meter.dev', () => {
+  console.log('Connected to Smart Meter P1 Stream');
+});
+
+client.on('data', (data) => {
+  // Raw telegram data (DSMR 5.0 format)
+  console.log(data.toString());
+});
+
+client.on('close', () => {
+  console.log('Connection closed');
+});"}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

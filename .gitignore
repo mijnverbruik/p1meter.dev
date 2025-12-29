@@ -1,0 +1,14 @@
+/.elixir_ls/
+/.fetch
+/_build/
+/assets/npm-debug.log
+/assets/node_modules/
+/cover/
+/deps/
+/doc/
+/priv/static/assets/
+/priv/static/cache_manifest.json
+/tmp/
+*.ez
+erl_crash.dump
+live_meter-*.tar
