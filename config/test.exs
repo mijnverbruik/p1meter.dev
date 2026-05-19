@@ -7,6 +7,10 @@ config :live_meter, LiveMeterWeb.Endpoint,
   secret_key_base: "3toIB3ZlrEYx9wmShJd1Yb/Uy0EUJw9LGs9rrNa4cpo1ErZBCRgFOCMXBJPAjOwa",
   server: false
 
+# In test we don't want the server and meter to start.
+config :live_meter, LiveMeter.TCPServer, enabled: false
+config :live_meter, LiveMeter.SmartMeter, enabled: false
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

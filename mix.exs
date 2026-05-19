@@ -81,12 +81,10 @@ defmodule LiveMeter.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": [
         "compile",
-        "cmd --cd assets npm ci",
         "tailwind live_meter",
         "esbuild live_meter"
       ],
       "assets.deploy": [
-        "cmd --cd assets npm ci",
         "tailwind live_meter --minify",
         "esbuild live_meter --minify",
         "phx.digest"

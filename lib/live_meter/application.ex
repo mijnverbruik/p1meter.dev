@@ -39,7 +39,7 @@ defmodule LiveMeter.Application do
   end
 
   defp maybe_enabled_spec(module, opts) do
-    unless Mix.env() == :test do
+    if Keyword.get(opts, :enabled, true) do
       {module, opts}
     else
       %{id: module, start: {Function, :identity, [:ignore]}}

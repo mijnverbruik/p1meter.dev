@@ -1,8 +1,6 @@
 /.elixir_ls/
 /.fetch
 /_build/
-/assets/npm-debug.log
-/assets/node_modules/
 /cover/
 /deps/
 /doc/
