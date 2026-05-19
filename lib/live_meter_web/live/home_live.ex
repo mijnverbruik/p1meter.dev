@@ -106,7 +106,7 @@ defmodule LiveMeterWeb.HomeLive do
 
     {:ok,
      socket
-     |> assign(:page_title, "Virtual Smart Meter P1 Simulator")
+     |> assign(:page_title, "Home")
      |> assign(:is_connected, connected?(socket))
      |> assign(:current_index, 0)
      |> assign_snapshot(snapshot)}
