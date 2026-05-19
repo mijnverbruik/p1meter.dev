@@ -96,6 +96,24 @@ defmodule LiveMeterWeb.HomeLive do
   !A1B2
   """
 
+  @developer_example """
+  const net = require('net');
+
+  const client = new net.Socket();
+  client.connect(8080, 'p1meter.dev', () => {
+    console.log('Connected to Smart Meter P1 Stream');
+  });
+
+  client.on('data', (data) => {
+    // Raw telegram data (DSMR 5.0 format)
+    console.log(data.toString());
+  });
+
+  client.on('close', () => {
+    console.log('Connection closed');
+  });
+  """
+
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -109,6 +127,7 @@ defmodule LiveMeterWeb.HomeLive do
      |> assign(:page_title, "Home")
      |> assign(:is_connected, connected?(socket))
      |> assign(:current_index, 0)
+     |> assign(:developer_example, @developer_example)
      |> assign_snapshot(snapshot)}
   end
 

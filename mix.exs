@@ -55,6 +55,8 @@ defmodule LiveMeter.MixProject do
        compile: false,
        depth: 1},
       {:lazy_html, ">= 0.1.0", only: :test},
+      {:makeup, "~> 1.2"},
+      {:makeup_syntect, "~> 0.1"},
       {:phoenix, "~> 1.8.3"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.3"},

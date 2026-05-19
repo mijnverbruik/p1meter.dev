@@ -19,6 +19,8 @@ config :live_meter, LiveMeter.TCPServer,
 
 config :live_meter, LiveMeter.SmartMeter, interval: 10_000
 
+config :makeup_syntect, register_for_languages: ["javascript"]
+
 # Configure the endpoint
 config :live_meter, LiveMeterWeb.Endpoint,
   url: [host: "localhost"],

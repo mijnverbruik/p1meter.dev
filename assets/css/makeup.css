@@ -1,0 +1,80 @@
+.code-highlight .hll {background-color: #49483e}
+.code-highlight {color: #f8f8f2;}
+
+.code-highlight .unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.code-highlight .bp {color: #f8f8f2; } /* :name_builtin_pseudo */
+.code-highlight .c {color: #75715e; } /* :comment */
+.code-highlight .c1 {color: #75715e; } /* :comment_single */
+.code-highlight .ch {color: #75715e; } /* :comment_hashbang */
+.code-highlight .cm {color: #75715e; } /* :comment_multiline */
+.code-highlight .cp {color: #75715e; } /* :comment_preproc */
+.code-highlight .cpf {color: #75715e; } /* :comment_preproc_file */
+.code-highlight .cs {color: #75715e; } /* :comment_special */
+.code-highlight .dl {color: #e6db74; } /* :string_delimiter */
+.code-highlight .err {color: #960050; background-color: #1e0010; } /* :error */
+.code-highlight .fm {color: #a6e22e; } /* :name_function_magic */
+.code-highlight .gd {color: #f92672; } /* :generic_deleted */
+.code-highlight .ge {font-style: italic; } /* :generic_emph */
+.code-highlight .gi {color: #a6e22e; } /* :generic_inserted */
+.code-highlight .gs {font-weight: bold; } /* :generic_strong */
+.code-highlight .gu {color: #75715e; } /* :generic_subheading */
+.code-highlight .il {color: #ae81ff; } /* :number_integer_long */
+.code-highlight .k {color: #66d9ef; } /* :keyword */
+.code-highlight .kc {color: #66d9ef; } /* :keyword_constant */
+.code-highlight .kd {color: #66d9ef; } /* :keyword_declaration */
+.code-highlight .kn {color: #f92672; } /* :keyword_namespace */
+.code-highlight .kp {color: #66d9ef; } /* :keyword_pseudo */
+.code-highlight .kr {color: #66d9ef; } /* :keyword_reserved */
+.code-highlight .kt {color: #66d9ef; } /* :keyword_type */
+.code-highlight .l {color: #ae81ff; } /* :literal */
+.code-highlight .ld {color: #ae81ff; } /* :literal_date */
+.code-highlight .m {color: #ae81ff; } /* :number */
+.code-highlight .mb {color: #ae81ff; } /* :number_bin */
+.code-highlight .mf {color: #ae81ff; } /* :number_float */
+.code-highlight .mh {color: #ae81ff; } /* :number_hex */
+.code-highlight .mi {color: #ae81ff; } /* :number_integer */
+.code-highlight .mo {color: #ae81ff; } /* :number_oct */
+.code-highlight .n {color: #f8f8f2; } /* :name */
+.code-highlight .na {color: #a6e22e; } /* :name_attribute */
+.code-highlight .nb {color: #f8f8f2; } /* :name_builtin */
+.code-highlight .nc {color: #a6e22e; } /* :name_class */
+.code-highlight .nd {color: #a6e22e; } /* :name_decorator */
+.code-highlight .ne {color: #a6e22e; } /* :name_exception */
+.code-highlight .nf {color: #a6e22e; } /* :name_function */
+.code-highlight .ni {color: #f8f8f2; } /* :name_entity */
+.code-highlight .nl {color: #f8f8f2; } /* :name_label */
+.code-highlight .nn {color: #f8f8f2; } /* :name_namespace */
+.code-highlight .no {color: #66d9ef; } /* :name_constant */
+.code-highlight .nt {color: #f92672; } /* :name_tag */
+.code-highlight .nv {color: #f8f8f2; } /* :name_variable */
+.code-highlight .nx {color: #a6e22e; } /* :name_other */
+.code-highlight .o {color: #f92672; } /* :operator */
+.code-highlight .ow {color: #f92672; } /* :operator_word */
+.code-highlight .p {color: #f8f8f2; } /* :punctuation */
+.code-highlight .py {color: #f8f8f2; } /* :name_property */
+.code-highlight .s {color: #e6db74; } /* :string */
+.code-highlight .s1 {color: #e6db74; } /* :string_single */
+.code-highlight .s2 {color: #e6db74; } /* :string_double */
+.code-highlight .sa {color: #e6db74; } /* :string_affix */
+.code-highlight .sb {color: #e6db74; } /* :string_backtick */
+.code-highlight .sc {color: #e6db74; } /* :string_char */
+.code-highlight .sd {color: #e6db74; } /* :string_doc */
+.code-highlight .se {color: #ae81ff; } /* :string_escape */
+.code-highlight .sh {color: #e6db74; } /* :string_heredoc */
+.code-highlight .si {color: #e6db74; } /* :string_interpol */
+.code-highlight .sr {color: #e6db74; } /* :string_regex */
+.code-highlight .ss {color: #e6db74; } /* :string_symbol */
+.code-highlight .sx {color: #e6db74; } /* :string_other */
+.code-highlight .sx {color: #e6db74; } /* :string_sigil */
+.code-highlight .vc {color: #f8f8f2; } /* :name_variable_class */
+.code-highlight .vg {color: #f8f8f2; } /* :name_variable_global */
+.code-highlight .vi {color: #f8f8f2; } /* :name_variable_instance */
+.code-highlight .vm {color: #f8f8f2; } /* :name_variable_magic */

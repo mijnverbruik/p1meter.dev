@@ -281,21 +281,7 @@
               </div>
               <span class="text-neutral-500 text-xs font-mono ml-2">client.js</span>
             </div>
-            <pre class="text-xs font-mono text-neutral-300 leading-relaxed p-4 bg-neutral-900 overflow-x-auto"><code>{"const net = require('net');
-
-const client = new net.Socket();
-client.connect(8080, 'p1meter.dev', () => {
-  console.log('Connected to Smart Meter P1 Stream');
-});
-
-client.on('data', (data) => {
-  // Raw telegram data (DSMR 5.0 format)
-  console.log(data.toString());
-});
-
-client.on('close', () => {
-  console.log('Connection closed');
-});"}</code></pre>
+            <pre class="text-xs font-mono text-neutral-300 leading-relaxed p-4 bg-neutral-900 overflow-x-auto"><code class="code-highlight">{LiveMeterWeb.CodeHighlight.javascript(@developer_example)}</code></pre>
           </div>
         </div>
       </div>
