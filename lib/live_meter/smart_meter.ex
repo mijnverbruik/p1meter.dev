@@ -33,7 +33,7 @@ defmodule LiveMeter.SmartMeter do
   @impl true
   def init(opts) do
     state = %{
-      interval: Keyword.get(opts, :interval, 10_000),
+      interval: Keyword.get(opts, :interval, 1_000),
       pubsub_topic: Keyword.get(opts, :pubsub_topic, Telegrams.topic()),
       virtual_time: Keyword.get(opts, :virtual_time, NaiveDateTime.utc_now()),
       electricity_delivered_1: Keyword.get(opts, :electricity_delivered_1, 1234.567),

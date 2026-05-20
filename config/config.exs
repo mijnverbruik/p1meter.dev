@@ -17,7 +17,7 @@ config :live_meter, LiveMeter.TCPServer,
   accept_rate_limit: {1, 20},
   listen_backlog: 128
 
-config :live_meter, LiveMeter.SmartMeter, interval: 10_000
+config :live_meter, LiveMeter.SmartMeter, interval: 1_000
 
 config :makeup_syntect, register_for_languages: ["javascript"]
 

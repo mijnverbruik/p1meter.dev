@@ -64,13 +64,13 @@ defmodule LiveMeter.SmartMeterTest do
 
     start_supervised!(
       {SmartMeter,
-       name: name, interval: 10_000, pubsub_topic: topic, virtual_time: ~N[2026-05-12 12:00:00]}
+       name: name, interval: 1_000, pubsub_topic: topic, virtual_time: ~N[2026-05-12 12:00:00]}
     )
 
     send(Process.whereis(name), :emit_telegram)
 
     assert_receive {:smart_meter_telegram, telegram, _telegram_string}, 1_000
-    assert telegram.measured_at.value == ~N[2026-05-12 12:00:10]
+    assert telegram.measured_at.value == ~N[2026-05-12 12:00:01]
   end
 
   test "readings formats a telegram for the meter display" do
