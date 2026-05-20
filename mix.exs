@@ -65,6 +65,7 @@ defmodule LiveMeter.MixProject do
       {:req, "~> 0.5"},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_metrics_prometheus, "~> 1.1"},
       {:telemetry_poller, "~> 1.0"}
     ]
   end

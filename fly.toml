@@ -25,3 +25,7 @@ primary_region = "ams"
 [[vm]]
   size = "shared-cpu-1x"
   memory = "512mb"
+
+[metrics]
+port = 9568
+path = "/metrics"
