@@ -37,10 +37,21 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "p1meter.dev"
+  canonical_host = System.get_env("CANONICAL_HOST") || host
+
+  redirect_hosts =
+    "REDIRECT_HOSTS"
+    |> System.get_env("www.p1meter.dev")
+    |> String.split(",", trim: true)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
 
   config :live_meter, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :live_meter, LiveMeterWeb.Endpoint,
+    canonical_host: canonical_host,
+    redirect_hosts: redirect_hosts,
+    canonical_host_redirect_status: 301,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
