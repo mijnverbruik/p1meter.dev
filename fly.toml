@@ -7,7 +7,9 @@ app = "p1meter-app"
 primary_region = "ams"
 
 [build]
-  dockerfile = "Dockerfile"
+
+[env]
+  REDIRECT_HOSTS = "www.p1meter.dev,p1meter-app.fly.dev"
 
 [http_service]
   internal_port = 4000
