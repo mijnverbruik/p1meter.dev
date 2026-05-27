@@ -3,10 +3,12 @@ defmodule LiveMeter.TCPServer do
 
   require Logger
 
+  alias LiveMeter.TCPClient
   alias LiveMeter.SmartMeter.Telegrams
 
   @default_name __MODULE__
   @default_accept_rate_limit {1, 20}
+  @default_line_delay {:baud, 115_200}
 
   def start_link(opts) do
     name = Keyword.get(opts, :name, @default_name)
@@ -36,6 +38,7 @@ defmodule LiveMeter.TCPServer do
     accept_rate_limit = Keyword.get(opts, :accept_rate_limit, @default_accept_rate_limit)
     listen_backlog = Keyword.get(opts, :listen_backlog, 128)
     rate_limit_prefix = Keyword.get(opts, :rate_limit_prefix, :tcp_accept)
+    line_delay = Keyword.get(opts, :line_delay, @default_line_delay)
 
     {:ok, listen_socket} =
       :gen_tcp.listen(port, [
@@ -63,6 +66,7 @@ defmodule LiveMeter.TCPServer do
        max_clients_per_ip: max_clients_per_ip,
        accept_rate_limit: accept_rate_limit,
        rate_limit_prefix: rate_limit_prefix,
+       line_delay: line_delay,
        clients: []
      }}
   end
@@ -91,42 +95,25 @@ defmodule LiveMeter.TCPServer do
 
   @impl true
   def handle_info({:smart_meter_telegram, _telegram, telegram_string}, state) do
-    clients =
-      Enum.filter(state.clients, fn client_socket ->
-        case :gen_tcp.send(client_socket.socket, telegram_string) do
-          :ok ->
-            true
-
-          {:error, reason} ->
-            Logger.debug("Removing disconnected smart meter TCP client: #{inspect(reason)}")
-            :gen_tcp.close(client_socket.socket)
-            false
-        end
-      end)
-
-    {:noreply, %{state | clients: clients}}
-  end
-
-  def handle_info({:tcp, client_socket, _data}, state) do
-    if client_connected?(state.clients, client_socket) do
-      :inet.setopts(client_socket, active: :once)
-    end
+    Enum.each(state.clients, fn client ->
+      TCPClient.stream(client.pid, telegram_string)
+    end)
 
     {:noreply, state}
   end
 
-  def handle_info({:tcp_closed, client_socket}, state) do
-    {:noreply, remove_client(state, client_socket)}
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, state) do
+    {:noreply, remove_client(state, ref)}
   end
 
-  def handle_info({:tcp_error, client_socket, reason}, state) do
-    Logger.debug("Removing errored smart meter TCP client: #{inspect(reason)}")
-    {:noreply, remove_client(state, client_socket)}
+  def handle_info(message, state) do
+    Logger.debug("Ignoring unexpected smart meter TCP server message: #{inspect(message)}")
+    {:noreply, state}
   end
 
   @impl true
   def terminate(_reason, state) do
-    Enum.each(state.clients, fn client -> :gen_tcp.close(client.socket) end)
+    Enum.each(state.clients, fn client -> GenServer.stop(client.pid) end)
     :gen_tcp.close(state.listen_socket)
     :ok
   end
@@ -134,9 +121,14 @@ defmodule LiveMeter.TCPServer do
   defp connect_client(client_socket, peer_ip, state) do
     with :ok <- check_accept_rate(peer_ip, state),
          :ok <- check_client_capacity(peer_ip, state) do
-      :ok = :inet.setopts(client_socket, active: :once)
+      {:ok, client_pid} = TCPClient.start(client_socket, line_delay: state.line_delay)
+      :ok = :gen_tcp.controlling_process(client_socket, client_pid)
+      ref = Process.monitor(client_pid)
+      TCPClient.activate(client_pid)
       Logger.debug("Smart meter TCP client connected: #{inspect(client_socket)}")
-      {:noreply, %{state | clients: [%{socket: client_socket, peer_ip: peer_ip} | state.clients]}}
+
+      client = %{socket: client_socket, peer_ip: peer_ip, pid: client_pid, ref: ref}
+      {:noreply, %{state | clients: [client | state.clients]}}
     else
       {:error, reason} ->
         Logger.debug("Rejecting smart meter TCP client: #{inspect(reason)}")
@@ -174,12 +166,8 @@ defmodule LiveMeter.TCPServer do
     Enum.count(clients, fn client -> client.peer_ip == peer_ip end)
   end
 
-  defp client_connected?(clients, client_socket) do
-    Enum.any?(clients, fn client -> client.socket == client_socket end)
-  end
-
-  defp remove_client(state, client_socket) do
-    clients = Enum.reject(state.clients, fn client -> client.socket == client_socket end)
+  defp remove_client(state, ref) do
+    clients = Enum.reject(state.clients, fn client -> client.ref == ref end)
     %{state | clients: clients}
   end
 

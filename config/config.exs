@@ -15,7 +15,8 @@ config :live_meter, LiveMeter.TCPServer,
   max_clients: 100,
   max_clients_per_ip: 5,
   accept_rate_limit: {1, 20},
-  listen_backlog: 128
+  listen_backlog: 128,
+  line_delay: {:baud, 115_200}
 
 config :live_meter, LiveMeter.SmartMeter, interval: 1_000
 
