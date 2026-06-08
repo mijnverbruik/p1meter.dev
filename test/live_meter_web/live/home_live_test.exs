@@ -9,7 +9,7 @@ defmodule LiveMeterWeb.HomeLiveTest do
   test "renders the landing page and meter shell", %{conn: conn} do
     {:ok, _view, html} = live(conn, ~p"/")
 
-    assert html =~ "Virtual Smart Meter P1 Simulator"
+    assert html =~ "Virtual P1 Simulator"
 
     # Assert smart meter component
     assert html =~ "Electricity delivered T1"

@@ -2,11 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="p1meter.dev" suffix=" · p1meter.dev">
+    <.live_title>
       {assigns[:page_title]}
     </.live_title>
+    <meta
+      name="description"
+      value="A virtual DSMR P1 smart meter simulator that streams realistic telegram data over TCP/IP for testing energy apps, dashboards, and home automation integrations."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <link rel="canonical" href="https://p1meter.dev/" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script phx-track-static type="text/javascript" src={~p"/assets/js/app.js"} defer>
     </script>

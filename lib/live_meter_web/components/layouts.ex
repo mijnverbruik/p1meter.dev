@@ -41,7 +41,7 @@ defmodule LiveMeterWeb.Layouts do
           p1meter<span class="text-neutral-400">.dev</span>
         </h1>
         <p class="text-neutral-500 font-mono text-sm">
-          Virtual Smart Meter P1 Simulator
+          Virtual P1 Simulator
         </p>
       </header>
 

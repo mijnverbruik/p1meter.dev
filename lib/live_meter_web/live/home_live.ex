@@ -124,7 +124,7 @@ defmodule LiveMeterWeb.HomeLive do
 
     {:ok,
      socket
-     |> assign(:page_title, "Home")
+     |> assign(:page_title, "p1meter.dev — Virtual P1 Simulator")
      |> assign(:is_connected, connected?(socket))
      |> assign(:current_index, 0)
      |> assign(:developer_example, @developer_example)
