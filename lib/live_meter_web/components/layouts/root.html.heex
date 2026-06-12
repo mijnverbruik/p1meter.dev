@@ -7,11 +7,26 @@
     </.live_title>
     <meta
       name="description"
-      value="A virtual DSMR P1 smart meter simulator that streams realistic telegram data over TCP/IP for testing energy apps, dashboards, and home automation integrations."
+      content="A virtual DSMR P1 smart meter simulator that streams realistic telegram data over TCP/IP for testing energy apps, dashboards, and home automation integrations."
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
+    <meta property="og:title" content="p1meter.dev — Virtual P1 Simulator" />
+    <meta
+      property="og:description"
+      content="A virtual DSMR P1 smart meter that streams realistic telegram data over TCP/IP. Build and test your energy software without a physical meter."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://p1meter.dev/" />
+    <meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101412" media="(prefers-color-scheme: dark)" />
     <link rel="canonical" href="https://p1meter.dev/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script phx-track-static type="text/javascript" src={~p"/assets/js/app.js"} defer>
     </script>
@@ -22,7 +37,7 @@
     >
     </script>
   </head>
-  <body class="bg-white text-neutral-900 antialiased">
+  <body class="bg-[#fafaf8] text-neutral-900 antialiased dark:bg-[#101412] dark:text-neutral-200">
     {@inner_content}
   </body>
 </html>

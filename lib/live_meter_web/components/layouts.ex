@@ -36,32 +36,32 @@ defmodule LiveMeterWeb.Layouts do
   def app(assigns) do
     ~H"""
     <div class="max-w-2xl mx-auto my-16 px-4">
-      <header class="text-center">
-        <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-2">
-          p1meter<span class="text-neutral-400">.dev</span>
+      <header class="text-center fade-up">
+        <h1 class="text-3xl md:text-4xl font-bold font-mono tracking-tight text-neutral-900 dark:text-neutral-100 mb-3">
+          p1meter<span class="text-neutral-400 dark:text-neutral-500">.dev</span>
         </h1>
-        <p class="text-neutral-500 font-mono text-sm">
-          Virtual P1 Simulator
+        <p class="text-neutral-500 dark:text-neutral-400 font-mono text-sm">
+          A virtual smart meter P1 port, streaming over TCP
         </p>
       </header>
 
-      <main class="mt-24">
+      <main class="mt-16">
         {render_slot(@inner_block)}
       </main>
 
-      <footer class="mt-24 pt-8 border-t border-neutral-100 flex flex-col md:flex-row justify-between items-center gap-4 px-4">
-        <p class="text-neutral-400 text-[10px] md:text-xs font-mono order-2 md:order-1">
-          Copyright &copy; 2025 —
+      <footer class="mt-24 pt-8 border-t border-neutral-100 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-4 px-4">
+        <p class="text-neutral-400 dark:text-neutral-500 text-[10px] md:text-xs font-mono order-2 md:order-1">
+          Copyright &copy; {Date.utc_today().year} —
           <a
             href="https://robinvdvleuten.nl"
-            class="text-neutral-400 hover:text-neutral-700 transition-colors"
+            class="text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
           >
             Robin van der Vleuten
           </a>
         </p>
         <a
           href="https://github.com/mijnverbruik/p1meter.dev"
-          class="text-neutral-400 hover:text-neutral-700 transition-colors inline-flex items-center gap-2 group order-1 md:order-2"
+          class="text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors inline-flex items-center gap-2 group order-1 md:order-2"
           aria-label="View source on GitHub"
         >
           <span class="text-[10px] md:text-xs tracking-wider">

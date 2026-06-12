@@ -1,8 +1,9 @@
 <Layouts.app flash={@flash}>
-  <div>
-    <div id="smart-meter" class="flex justify-center">
+  <div class="fade-up" style="animation-delay: 0.15s">
+    <div id="smart-meter" class="relative flex justify-center pb-8">
+      <div class="absolute inset-0 grid-backdrop" aria-hidden="true"></div>
       <div class="relative">
-        <div class="relative w-[320px] sm:w-[380px] bg-[#f5f5f0] rounded-lg shadow-2xl border-2 border-[#d4d4c8]">
+        <div class="relative w-[320px] sm:w-[380px] bg-[#f5f5f0] rounded-lg shadow-2xl shadow-neutral-900/20 dark:shadow-black/60 border-2 border-[#d4d4c8]">
           <div class="px-6 pt-5 pb-3">
             <div class="flex items-center justify-between">
               <span class="text-[10px] font-mono text-[#666] tracking-wider">SMART METER</span>
@@ -15,7 +16,7 @@
           </div>
 
           <div class="mx-4 mb-4">
-            <div class="bg-[#2a3f2a] rounded-sm p-4 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)] border border-[#1a2f1a]">
+            <div class="relative crt-scanlines bg-[#2a3f2a] rounded-sm p-4 shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)] border border-[#1a2f1a]">
               <div
                 id="meter-display"
                 class="font-mono text-[#7fff7f] drop-shadow-[0_0_4px_rgba(127,255,127,0.5)] transition-opacity duration-150"
@@ -58,11 +59,7 @@
             <div class="flex items-center justify-between">
               <div class="flex gap-3">
                 <div class="flex items-center gap-1.5">
-                  <div class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75">
-                    </span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                  </div>
+                  <div class="w-2 h-2 rounded-full led-blink" aria-hidden="true"></div>
                   <span class="text-[7px] font-mono text-[#666]">1000 imp/kWh</span>
                 </div>
                 <div class="flex items-center gap-1.5">
@@ -104,41 +101,8 @@
                     <span class="text-[#888]">TYPE:</span> ESMR 5.0
                   </div>
                   <div class="text-[8px] font-mono text-[#555]">3x230/400V 0,25-5(100)A</div>
-                  <div class="mt-1.5 flex items-center gap-1">
-                    <div class="flex gap-[1px]">
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-px"></div>
-                      <div class="bg-[#333] h-4 w-[2px]"></div>
-                    </div>
+                  <div class="mt-1.5">
+                    <.barcode />
                   </div>
                   <div class="text-[7px] font-mono text-[#666] tracking-wider">4530303131031</div>
                 </div>
@@ -165,126 +129,145 @@
         </div>
       </div>
     </div>
-    <p class="text-center text-xs text-muted-foreground font-mono mt-8">
+    <p class="text-center text-xs text-neutral-400 dark:text-neutral-500 font-mono mt-6">
       Press the button to cycle through readings ↑
     </p>
   </div>
 
-  <div class="mt-24 px-4">
-    <div class="prose prose-neutral prose-sm md:prose-base mx-auto">
-      <div class="space-y-16">
-        <div>
-          <div class="flex items-center gap-3 mb-4">
-            <h3 class="text-lg font-bold font-mono uppercase tracking-tight m-0 text-neutral-900">
-              What is this?
-            </h3>
-          </div>
-          <p class="text-neutral-600 leading-relaxed">
-            In the Netherlands and Belgium, modern "Smart Meters" feature a physical <strong>P1 Port</strong>. This port outputs live electricity and gas usage data to devices like Home Assistant or custom energy displays.
-          </p>
-          <p class="text-neutral-600 leading-relaxed mt-4">
-            <strong>p1meter.dev</strong>
-            is a virtual version of that port. It provides a live stream of simulated data that mimics the standard
-            <strong>DSMR 5.0</strong>
-            protocol. Use it to build and test your energy management software without needing to be near a physical meter.
-          </p>
-        </div>
+  <div class="mt-24 fade-up" style="animation-delay: 0.3s">
+    <div class="space-y-20">
+      <section aria-labelledby="what-is-this">
+        <.section_heading id="what-is-this" number="01" title="What is this?" />
+        <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          In the Netherlands and Belgium, modern "Smart Meters" feature a physical <strong class="font-semibold text-neutral-900 dark:text-neutral-100">P1 Port</strong>.
+          This port outputs live electricity and gas usage data to devices like Home Assistant or custom energy displays.
+        </p>
+        <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed mt-4">
+          <strong class="font-semibold text-neutral-900 dark:text-neutral-100">
+            p1meter.dev
+          </strong>
+          is a virtual version of that port. It provides a live stream of simulated data that mimics the standard
+          <strong class="font-semibold text-neutral-900 dark:text-neutral-100">DSMR 5.0</strong>
+          protocol. Use it to build and test your energy management software without needing to be near a physical meter.
+        </p>
+      </section>
 
-        <div>
-          <div class="flex items-center gap-3 mb-4">
-            <div class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75">
-              </span><span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </div>
-            <h3 class="text-lg font-bold font-mono uppercase tracking-tight m-0 text-neutral-900">
-              How to Connect
-            </h3>
+      <section aria-labelledby="how-to-connect">
+        <.section_heading id="how-to-connect" number="02" title="How to Connect" live? />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          <div class="border border-neutral-200 dark:border-neutral-800 rounded-lg p-5 bg-neutral-50 dark:bg-white/[0.03] flex flex-col shadow-sm dark:shadow-black/30">
+            <span class="text-xs font-mono font-bold uppercase text-neutral-400 dark:text-neutral-500 tracking-wider mb-4">
+              Stream Endpoint
+            </span>
+            <ul class="space-y-3 font-mono text-xs md:text-sm text-neutral-800 dark:text-neutral-200 flex-grow">
+              <li class="flex justify-between border-b border-neutral-200/60 dark:border-neutral-800 pb-2">
+                <span class="text-neutral-500">Host</span><span class="font-bold">p1meter.dev</span>
+              </li>
+              <li class="flex justify-between border-b border-neutral-200/60 dark:border-neutral-800 pb-2">
+                <span class="text-neutral-500">Port</span><span class="font-bold">8080</span>
+              </li>
+              <li class="flex justify-between border-b border-neutral-200/60 dark:border-neutral-800 pb-2">
+                <span class="text-neutral-500">Protocol</span><span>TCP/IP Raw</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-neutral-500">Standard</span><span>DSMR 5.0</span>
+              </li>
+            </ul>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-8">
-            <div class="border border-neutral-200 rounded-lg p-5 bg-neutral-50 flex flex-col shadow-sm">
-              <span class="text-xs font-mono font-bold uppercase text-neutral-400 tracking-wider mb-4">
-                Stream Endpoint
+          <div class="flex flex-col">
+            <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-3 leading-relaxed">
+              Run this in your terminal to see the raw data stream instantly:
+            </p>
+            <.terminal_frame title="terminal">
+              <div class="bg-neutral-900 dark:bg-[#0c0f0d] p-4 text-green-400 font-mono text-xs flex-grow flex items-center">
+                <code>$ nc p1meter.dev 8080</code>
+              </div>
+            </.terminal_frame>
+            <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-3 font-mono text-center">
+              New data packet every second.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="data-format">
+        <.section_heading id="data-format" number="03" title={~s|Data Format (The "Telegram")|} />
+        <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          In the smart meter world, a
+          <strong class="font-semibold text-neutral-900 dark:text-neutral-100">Telegram</strong>
+          is simply a text packet containing all current readings. The text below is exactly what your app will receive from our server.
+        </p>
+        <div class="rounded-lg overflow-hidden shadow-lg shadow-neutral-900/5 dark:shadow-black/40 mt-6 border border-neutral-200 dark:border-neutral-800">
+          <div class="bg-neutral-100 dark:bg-white/[0.04] px-4 py-2 flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse" aria-hidden="true">
+              </div>
+              <span class="text-neutral-500 dark:text-neutral-400 text-xs font-mono">
+                DSMR 5.0 Telegram
               </span>
-              <ul class="space-y-3 font-mono text-xs md:text-sm text-neutral-800 flex-grow">
-                <li class="flex justify-between border-b border-neutral-200/60 pb-2">
-                  <span class="text-neutral-500">Host</span><span class="font-bold">p1meter.dev</span>
-                </li>
-                <li class="flex justify-between border-b border-neutral-200/60 pb-2">
-                  <span class="text-neutral-500">Port</span><span class="font-bold">8080</span>
-                </li>
-                <li class="flex justify-between border-b border-neutral-200/60 pb-2">
-                  <span class="text-neutral-500">Protocol</span><span>TCP/IP Raw</span>
-                </li>
-                <li class="flex justify-between">
-                  <span class="text-neutral-500">Standard</span><span>DSMR 5.0</span>
-                </li>
-              </ul>
             </div>
-            <div class="border border-neutral-200 rounded-lg p-5 bg-neutral-50 flex flex-col shadow-sm">
-              <span class="text-xs font-mono font-bold uppercase text-neutral-400 tracking-wider mb-4">
-                Instant Preview
-              </span>
-              <p class="text-xs text-neutral-500 mb-3 leading-relaxed">
-                Run this in your terminal to see the raw data stream instantly:
-              </p>
-              <div class="rounded-lg overflow-hidden shadow-lg flex-grow flex flex-col">
-                <div class="bg-neutral-800 px-4 py-2 flex items-center gap-2">
-                  <div class="flex gap-1.5">
-                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
-                  </div>
-                  <span class="text-neutral-500 text-xs font-mono ml-2">terminal</span>
-                </div>
-                <div class="bg-neutral-900 p-4 text-green-400 font-mono text-xs flex-grow flex items-center">
-                  <code>$ nc p1meter.dev 8080</code>
-                </div>
-              </div>
-              <p class="text-xs text-neutral-400 mt-3 font-mono text-center">
-                New data packet every second.
-              </p>
-            </div>
+            <span class="text-neutral-400 dark:text-neutral-500 text-xs font-mono">
+              raw output
+            </span>
           </div>
+          <pre
+            id="raw-telegram"
+            class="text-xs font-mono text-neutral-600 dark:text-neutral-300 whitespace-pre leading-relaxed p-4 bg-white dark:bg-[#0c0f0d] overflow-x-auto"
+          ><code>{@raw_telegram}</code></pre>
         </div>
-        <div>
-          <h3 class="text-lg font-bold font-mono uppercase tracking-tight mb-4 text-neutral-900">
-            Data Format (The "Telegram")
-          </h3>
-          <p class="text-neutral-600 leading-relaxed">
-            In the smart meter world, a <strong>Telegram</strong>
-            is simply a text packet containing all current readings. The text below is exactly what your app will receive from our server.
-          </p>
-          <div class="rounded-lg overflow-hidden shadow-lg mt-6 border border-neutral-200">
-            <div class="bg-neutral-100 px-4 py-2 flex items-center justify-between border-b border-neutral-200">
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <span class="text-neutral-500 text-xs font-mono">DSMR 5.0 Telegram</span>
-              </div>
-              <span class="text-neutral-400 text-xs font-mono">raw output</span>
-            </div>
-            <pre
-              id="raw-telegram"
-              class="text-xs font-mono text-neutral-600 whitespace-pre leading-relaxed p-4 bg-white overflow-x-auto"
-            ><code>{@raw_telegram}</code></pre>
-          </div>
+      </section>
+
+      <section aria-labelledby="client-examples">
+        <.section_heading id="client-examples" number="04" title="Client Examples" />
+        <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed mb-6">
+          Connecting takes a couple of lines in any language with a TCP socket. Pick your favourite:
+        </p>
+        <div
+          role="tablist"
+          aria-label="Client example language"
+          class="relative z-10 flex gap-1 -mb-px"
+        >
+          <button
+            :for={example <- @developer_examples}
+            type="button"
+            role="tab"
+            id={"example-tab-#{example.id}"}
+            aria-selected={to_string(example.id == @current_example_id)}
+            aria-controls={"example-panel-#{example.id}"}
+            phx-click="select_example"
+            phx-value-id={example.id}
+            class={[
+              "px-4 py-2 text-xs font-mono rounded-t-lg border border-b-0 transition-colors cursor-pointer",
+              if(example.id == @current_example_id,
+                do:
+                  "bg-neutral-800 dark:bg-neutral-900 text-green-400 border-neutral-200 dark:border-neutral-800 font-semibold",
+                else:
+                  "bg-transparent text-neutral-500 dark:text-neutral-400 border-transparent hover:text-neutral-800 dark:hover:text-neutral-200"
+              )
+            ]}
+          >
+            {example.label}
+          </button>
         </div>
-        <div>
-          <h3 class="text-lg font-bold font-mono uppercase tracking-tight mb-4 text-neutral-900">
-            Developer Example (Node.js)
-          </h3>
-          <div class="rounded-lg overflow-hidden shadow-lg border border-neutral-200">
-            <div class="bg-neutral-800 px-4 py-2 flex items-center gap-2">
-              <div class="flex gap-1.5">
-                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
-              </div>
-              <span class="text-neutral-500 text-xs font-mono ml-2">client.js</span>
-            </div>
-            <pre class="text-xs font-mono text-neutral-300 leading-relaxed p-4 bg-neutral-900 overflow-x-auto"><code class="code-highlight">{LiveMeterWeb.CodeHighlight.javascript(@developer_example)}</code></pre>
-          </div>
+        <div
+          :for={example <- @developer_examples}
+          :if={example.id == @current_example_id}
+          id={"example-panel-#{example.id}"}
+          role="tabpanel"
+          aria-labelledby={"example-tab-#{example.id}"}
+        >
+          <.terminal_frame
+            title={example.filename}
+            rounded={
+              if example.id == hd(@developer_examples).id,
+                do: "rounded-b-lg rounded-tr-lg",
+                else: "rounded-lg"
+            }
+          >
+            <pre class="text-xs font-mono text-neutral-300 leading-relaxed p-4 bg-neutral-900 dark:bg-[#0c0f0d] overflow-x-auto min-h-[20rem]"><code class="code-highlight">{example.code}</code></pre>
+          </.terminal_frame>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 </Layouts.app>

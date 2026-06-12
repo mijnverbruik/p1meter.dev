@@ -3,6 +3,7 @@ defmodule LiveMeterWeb.HomeLive do
 
   alias LiveMeter.SmartMeter
   alias LiveMeter.SmartMeter.{Readings, Telegrams}
+  alias LiveMeterWeb.CodeHighlight
 
   attr :active?, :boolean, required: true
   attr :label, :string, required: true
@@ -47,6 +48,122 @@ defmodule LiveMeterWeb.HomeLive do
       )
     ]}>
     </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :number, :string, required: true
+  attr :title, :string, required: true
+  attr :live?, :boolean, default: false
+
+  def section_heading(assigns) do
+    ~H"""
+    <div class="flex items-baseline gap-3 mb-5">
+      <span class="font-mono text-xs font-semibold text-green-700 dark:text-[#7fff7f] tracking-widest">
+        {@number}
+      </span>
+      <h2
+        id={@id}
+        class="text-lg font-bold font-mono uppercase tracking-tight m-0 text-neutral-900 dark:text-neutral-100 flex items-center gap-2.5"
+      >
+        {@title}
+        <span :if={@live?} class="relative flex h-2.5 w-2.5" aria-hidden="true">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75">
+          </span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+        </span>
+      </h2>
+      <span class="flex-1 border-t border-dashed border-neutral-200 dark:border-neutral-800 self-center">
+      </span>
+    </div>
+    """
+  end
+
+  attr :title, :string, required: true
+  attr :rounded, :string, default: "rounded-lg", doc: "rounding classes for the frame corners"
+  attr :rest, :global
+  slot :inner_block, required: true
+  slot :actions
+
+  def terminal_frame(assigns) do
+    ~H"""
+    <div
+      class={[
+        @rounded,
+        "overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-lg shadow-neutral-900/5 dark:shadow-black/40 flex flex-col"
+      ]}
+      {@rest}
+    >
+      <div class="bg-neutral-800 dark:bg-neutral-900 px-4 py-2 flex items-center gap-2 border-b border-neutral-700/60 dark:border-neutral-800">
+        <div class="flex gap-1.5" aria-hidden="true">
+          <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+        </div>
+        <span class="text-neutral-500 text-xs font-mono ml-2">{@title}</span>
+        <div :if={@actions != []} class="ml-auto flex items-center">
+          {render_slot(@actions)}
+        </div>
+      </div>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  # Widths (in px) mimicking an EAN-style barcode, rendered as a single SVG.
+  @barcode_bars [
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2
+  ]
+
+  def barcode(assigns) do
+    {bars, width} =
+      Enum.map_reduce(@barcode_bars, 0, fn bar_width, x ->
+        {%{x: x, width: bar_width}, x + bar_width + 1}
+      end)
+
+    assigns = assign(assigns, bars: bars, width: width - 1)
+
+    ~H"""
+    <svg
+      viewBox={"0 0 #{@width} 16"}
+      class="h-4 fill-[#333]"
+      preserveAspectRatio="none"
+      style={"width: #{@width}px"}
+      aria-hidden="true"
+    >
+      <rect :for={bar <- @bars} x={bar.x} y="0" width={bar.width} height="16" />
+    </svg>
     """
   end
 
@@ -96,23 +213,83 @@ defmodule LiveMeterWeb.HomeLive do
   !A1B2
   """
 
-  @developer_example """
-  const net = require('net');
+  @developer_examples [
+    %{
+      id: "node",
+      label: "Node.js",
+      filename: "client.js",
+      language: "JavaScript",
+      source: """
+      const net = require('net');
 
-  const client = new net.Socket();
-  client.connect(8080, 'p1meter.dev', () => {
-    console.log('Connected to Smart Meter P1 Stream');
-  });
+      const client = new net.Socket();
+      client.connect(8080, 'p1meter.dev', () => {
+        console.log('Connected to Smart Meter P1 Stream');
+      });
 
-  client.on('data', (data) => {
-    // Raw telegram data (DSMR 5.0 format)
-    console.log(data.toString());
-  });
+      client.on('data', (data) => {
+        // Raw telegram data (DSMR 5.0 format)
+        console.log(data.toString());
+      });
 
-  client.on('close', () => {
-    console.log('Connection closed');
-  });
-  """
+      client.on('close', () => {
+        console.log('Connection closed');
+      });
+      """
+    },
+    %{
+      id: "python",
+      label: "Python",
+      filename: "client.py",
+      language: "Python",
+      source: """
+      import socket
+
+      sock = socket.create_connection(("p1meter.dev", 8080))
+      print("Connected to Smart Meter P1 Stream")
+
+      try:
+          while data := sock.recv(4096):
+              # Raw telegram data (DSMR 5.0 format)
+              print(data.decode(), end="")
+      finally:
+          sock.close()
+          print("Connection closed")
+      """
+    },
+    %{
+      id: "go",
+      label: "Go",
+      filename: "client.go",
+      language: "Go",
+      source: """
+      package main
+
+      import (
+      	"fmt"
+      	"io"
+      	"net"
+      	"os"
+      )
+
+      func main() {
+      	conn, err := net.Dial("tcp", "p1meter.dev:8080")
+      	if err != nil {
+      		fmt.Fprintln(os.Stderr, err)
+      		os.Exit(1)
+      	}
+      	defer conn.Close()
+
+      	fmt.Println("Connected to Smart Meter P1 Stream")
+
+      	// Raw telegram data (DSMR 5.0 format)
+      	io.Copy(os.Stdout, conn)
+      }
+      """
+    }
+  ]
+
+  @example_ids Enum.map(@developer_examples, & &1.id)
 
   @impl true
   def mount(_params, _session, socket) do
@@ -122,12 +299,20 @@ defmodule LiveMeterWeb.HomeLive do
 
     snapshot = latest_snapshot()
 
+    examples =
+      Enum.map(@developer_examples, fn example ->
+        example
+        |> Map.put(:code, CodeHighlight.highlight(example.source, example.language))
+        |> Map.delete(:source)
+      end)
+
     {:ok,
      socket
      |> assign(:page_title, "p1meter.dev — Virtual P1 Simulator")
      |> assign(:is_connected, connected?(socket))
      |> assign(:current_index, 0)
-     |> assign(:developer_example, @developer_example)
+     |> assign(:developer_examples, examples)
+     |> assign(:current_example_id, hd(@example_ids))
      |> assign_snapshot(snapshot)}
   end
 
@@ -135,6 +320,12 @@ defmodule LiveMeterWeb.HomeLive do
   def handle_event("cycle_reading", _params, socket) do
     {:noreply, cycle_current_reading(socket)}
   end
+
+  def handle_event("select_example", %{"id" => id}, socket) when id in @example_ids do
+    {:noreply, assign(socket, :current_example_id, id)}
+  end
+
+  def handle_event("select_example", _params, socket), do: {:noreply, socket}
 
   @impl true
   def handle_info({:smart_meter_telegram, nil, telegram_string}, socket) do
@@ -152,10 +343,10 @@ defmodule LiveMeterWeb.HomeLive do
 
   defp latest_snapshot do
     case latest_telegram_snapshot() do
-      {telegram, telegram_string} ->
+      {telegram, telegram_string} when telegram != nil and telegram_string != nil ->
         %{payload: Readings.from_telegram(telegram), raw_telegram: telegram_string}
 
-      nil ->
+      _ ->
         %{payload: zero_payload(), raw_telegram: @sample_telegram}
     end
   end
@@ -175,6 +366,9 @@ defmodule LiveMeterWeb.HomeLive do
     |> assign(:raw_telegram, raw_telegram)
     |> assign_payload(payload)
   end
+
+  defp assign_payload(socket, %{tariff: tariff, readings: []}),
+    do: assign_payload(socket, %{tariff: tariff, readings: @zero_readings})
 
   defp assign_payload(socket, %{tariff: tariff, readings: readings}) do
     current_index = bounded_index(Map.get(socket.assigns, :current_index, 0), readings)
