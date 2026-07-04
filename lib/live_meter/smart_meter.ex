@@ -30,6 +30,10 @@ defmodule LiveMeter.SmartMeter do
     GenServer.call(server, :latest_telegram_string)
   end
 
+  def latest_snapshot(server \\ @default_name) do
+    GenServer.call(server, :latest_snapshot)
+  end
+
   @impl true
   def init(opts) do
     state = %{
@@ -58,6 +62,10 @@ defmodule LiveMeter.SmartMeter do
 
   def handle_call(:latest_telegram_string, _from, state) do
     {:reply, state.latest_telegram_string, state}
+  end
+
+  def handle_call(:latest_snapshot, _from, state) do
+    {:reply, {state.latest_telegram, state.latest_telegram_string}, state}
   end
 
   @impl true

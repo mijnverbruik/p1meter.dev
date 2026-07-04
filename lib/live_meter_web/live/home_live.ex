@@ -352,9 +352,9 @@ defmodule LiveMeterWeb.HomeLive do
   end
 
   defp latest_telegram_snapshot do
-    {SmartMeter.latest_telegram(), SmartMeter.latest_telegram_string()}
+    SmartMeter.latest_snapshot()
   catch
-    :exit, _reason -> nil
+    :exit, {:noproc, _} -> nil
   end
 
   defp zero_payload do
