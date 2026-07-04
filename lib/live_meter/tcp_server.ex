@@ -82,7 +82,7 @@ defmodule LiveMeter.TCPServer do
        accept_rate_limit: accept_rate_limit,
        rate_limit_prefix: rate_limit_prefix,
        line_delay: line_delay,
-       clients: []
+       clients: %{}
      }}
   end
 
@@ -106,7 +106,7 @@ defmodule LiveMeter.TCPServer do
 
   @impl true
   def handle_info({:smart_meter_telegram, _telegram, telegram_string}, state) do
-    Enum.each(state.clients, fn client ->
+    Enum.each(state.clients, fn {_ref, client} ->
       TCPClient.stream(client.pid, telegram_string)
     end)
 
@@ -124,7 +124,7 @@ defmodule LiveMeter.TCPServer do
 
   @impl true
   def terminate(_reason, state) do
-    Enum.each(state.clients, fn client -> :gen_tcp.close(client.socket) end)
+    Enum.each(state.clients, fn {_ref, client} -> :gen_tcp.close(client.socket) end)
     :gen_tcp.close(state.listen_socket)
     :ok
   end
@@ -138,8 +138,8 @@ defmodule LiveMeter.TCPServer do
       TCPClient.activate(client_pid)
       Logger.debug("Smart meter TCP client connected: #{inspect(client_socket)}")
 
-      client = %{socket: client_socket, peer_ip: peer_ip, pid: client_pid, ref: ref}
-      {:noreply, %{state | clients: [client | state.clients]}}
+      client = %{socket: client_socket, peer_ip: peer_ip, pid: client_pid}
+      {:noreply, %{state | clients: Map.put(state.clients, ref, client)}}
     else
       {:error, reason} ->
         Logger.debug("Rejecting smart meter TCP client: #{inspect(reason)}")
@@ -162,7 +162,7 @@ defmodule LiveMeter.TCPServer do
 
   defp check_client_capacity(peer_ip, state) do
     cond do
-      length(state.clients) >= state.max_clients ->
+      map_size(state.clients) >= state.max_clients ->
         {:error, :max_clients_reached}
 
       client_count_for_ip(state.clients, peer_ip) >= state.max_clients_per_ip ->
@@ -174,12 +174,11 @@ defmodule LiveMeter.TCPServer do
   end
 
   defp client_count_for_ip(clients, peer_ip) do
-    Enum.count(clients, fn client -> client.peer_ip == peer_ip end)
+    Enum.count(clients, fn {_ref, client} -> client.peer_ip == peer_ip end)
   end
 
   defp remove_client(state, ref) do
-    clients = Enum.reject(state.clients, fn client -> client.ref == ref end)
-    %{state | clients: clients}
+    %{state | clients: Map.delete(state.clients, ref)}
   end
 
   defp peer_ip(client_socket) do

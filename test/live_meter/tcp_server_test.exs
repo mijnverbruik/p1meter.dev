@@ -244,7 +244,7 @@ defmodule LiveMeter.TCPServerTest do
   defp wait_until_client_count(name, count) do
     state = :sys.get_state(name)
 
-    if length(state.clients) >= count do
+    if map_size(state.clients) >= count do
       state
     else
       receive do
