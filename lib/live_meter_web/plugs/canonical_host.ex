@@ -14,7 +14,10 @@ defmodule LiveMeterWeb.Plugs.CanonicalHost do
 
     if canonical_host && conn.host in redirect_hosts do
       conn
-      |> put_resp_header("location", location(conn, canonical_host))
+      |> put_resp_header(
+        "location",
+        location(conn, canonical_host, Keyword.get(config, :url, []))
+      )
       |> send_resp(Keyword.get(config, :canonical_host_redirect_status, @default_status), "")
       |> halt()
     else
@@ -25,13 +28,14 @@ defmodule LiveMeterWeb.Plugs.CanonicalHost do
   defp config do
     :live_meter
     |> Application.get_env(LiveMeterWeb.Endpoint, [])
-    |> Keyword.take([:canonical_host, :redirect_hosts, :canonical_host_redirect_status])
+    |> Keyword.take([:canonical_host, :redirect_hosts, :canonical_host_redirect_status, :url])
   end
 
-  defp location(conn, canonical_host) do
+  defp location(conn, canonical_host, url_config) do
     %URI{
-      scheme: "https",
+      scheme: Keyword.get(url_config, :scheme, Atom.to_string(conn.scheme)),
       host: canonical_host,
+      port: Keyword.get(url_config, :port, conn.port),
       path: conn.request_path,
       query: query_string(conn)
     }
