@@ -33,24 +33,36 @@ defmodule LiveMeter.TCPServer do
   @impl true
   def init(opts) do
     port = Keyword.get(opts, :port, 8080)
+    listen_backlog = Keyword.get(opts, :listen_backlog, 128)
+
+    case :gen_tcp.listen(port, [
+           :binary,
+           active: false,
+           backlog: listen_backlog,
+           reuseaddr: true,
+           packet: :raw,
+           send_timeout: 5_000,
+           send_timeout_close: true
+         ]) do
+      {:ok, listen_socket} ->
+        init_listening(listen_socket, opts)
+
+      {:error, reason} ->
+        Logger.error(
+          "Smart meter TCP server failed to listen on port #{port}: #{inspect(reason)}"
+        )
+
+        {:stop, {:listen_failed, reason}}
+    end
+  end
+
+  defp init_listening(listen_socket, opts) do
     pubsub_topic = Keyword.get(opts, :pubsub_topic, Telegrams.topic())
     max_clients = Keyword.get(opts, :max_clients, 100)
     max_clients_per_ip = Keyword.get(opts, :max_clients_per_ip, 5)
     accept_rate_limit = Keyword.get(opts, :accept_rate_limit, @default_accept_rate_limit)
-    listen_backlog = Keyword.get(opts, :listen_backlog, 128)
     rate_limit_prefix = Keyword.get(opts, :rate_limit_prefix, :tcp_accept)
     line_delay = Keyword.get(opts, :line_delay, @default_line_delay)
-
-    {:ok, listen_socket} =
-      :gen_tcp.listen(port, [
-        :binary,
-        active: false,
-        backlog: listen_backlog,
-        reuseaddr: true,
-        packet: :raw,
-        send_timeout: 5_000,
-        send_timeout_close: true
-      ])
 
     {:ok, actual_port} = :inet.port(listen_socket)
     server = self()
