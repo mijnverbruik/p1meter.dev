@@ -33,6 +33,8 @@ defmodule LiveMeter.TCPClient do
   end
 
   def handle_cast({:stream, telegram_string}, state) do
+    telegram_string = drop_stale_telegrams(telegram_string)
+
     case stream_lines(state.socket, lines(telegram_string), state.line_delay) do
       :ok ->
         {:noreply, state}
@@ -62,6 +64,16 @@ defmodule LiveMeter.TCPClient do
   def terminate(_reason, state) do
     :gen_tcp.close(state.socket)
     :ok
+  end
+
+  # A slow client can fall behind the emission rate; only the latest telegram
+  # matters, so queued stream casts are replaced by the newest one.
+  defp drop_stale_telegrams(telegram_string) do
+    receive do
+      {:"$gen_cast", {:stream, newer}} -> drop_stale_telegrams(newer)
+    after
+      0 -> telegram_string
+    end
   end
 
   defp stream_lines(_socket, [], _line_delay), do: :ok

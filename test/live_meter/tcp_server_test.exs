@@ -68,14 +68,10 @@ defmodule LiveMeter.TCPServerTest do
     second = "second\r\n"
 
     Telegrams.broadcast_telegram(nil, first, topic)
+    assert {:ok, ^first} = recv_until(active_client, first)
+
     Telegrams.broadcast_telegram(nil, second, topic)
-
-    assert {:ok, received} = recv_until(active_client, first)
-    assert received == first <> second or received == first
-
-    if received == first do
-      assert {:ok, ^second} = recv_until(active_client, second)
-    end
+    assert {:ok, ^second} = recv_until(active_client, second)
 
     :gen_tcp.close(active_client)
   end

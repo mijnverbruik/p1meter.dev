@@ -47,7 +47,9 @@ defmodule LiveMeter.TCPServer do
         active: false,
         backlog: listen_backlog,
         reuseaddr: true,
-        packet: :raw
+        packet: :raw,
+        send_timeout: 5_000,
+        send_timeout_close: true
       ])
 
     {:ok, actual_port} = :inet.port(listen_socket)
