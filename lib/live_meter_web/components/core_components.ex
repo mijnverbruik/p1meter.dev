@@ -29,6 +29,8 @@ defmodule LiveMeterWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: LiveMeterWeb.Gettext
 
+  alias Phoenix.LiveView.JS
+
   @doc """
   Renders flash notices.
 
@@ -52,7 +54,7 @@ defmodule LiveMeterWeb.CoreComponents do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
-      data-flash
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> JS.hide(to: "##{@id}")}
       role="alert"
       class="fixed top-4 right-4 z-50"
       {@rest}
