@@ -23,7 +23,13 @@ defmodule LiveMeter.TCPClient do
 
   @impl true
   def init({socket, opts}) do
-    {:ok, %{socket: socket, line_delay: Keyword.get(opts, :line_delay, @default_line_delay)}}
+    {:ok,
+     %{
+       socket: socket,
+       line_delay: Keyword.get(opts, :line_delay, @default_line_delay),
+       remaining: [],
+       next: nil
+     }}
   end
 
   @impl true
@@ -32,11 +38,29 @@ defmodule LiveMeter.TCPClient do
     {:noreply, state}
   end
 
-  def handle_cast({:stream, telegram_string}, state) do
-    telegram_string = drop_stale_telegrams(telegram_string)
+  def handle_cast({:stream, telegram_string}, %{remaining: []} = state) do
+    send(self(), :send_line)
+    {:noreply, %{state | remaining: lines(telegram_string)}}
+  end
 
-    case stream_lines(state.socket, lines(telegram_string), state.line_delay) do
+  # A slow client can fall behind the emission rate; only the latest telegram
+  # matters, so a pending telegram is replaced by the newest one.
+  def handle_cast({:stream, telegram_string}, state) do
+    {:noreply, %{state | next: lines(telegram_string)}}
+  end
+
+  @impl true
+  def handle_info(:send_line, %{remaining: []} = state), do: {:noreply, state}
+
+  def handle_info(:send_line, %{remaining: [line | rest]} = state) do
+    case :gen_tcp.send(state.socket, line) do
       :ok ->
+        state = advance_stream(%{state | remaining: rest})
+
+        if state.remaining != [] do
+          Process.send_after(self(), :send_line, delay_for(state.line_delay, line))
+        end
+
         {:noreply, state}
 
       {:error, reason} ->
@@ -45,7 +69,6 @@ defmodule LiveMeter.TCPClient do
     end
   end
 
-  @impl true
   def handle_info({:tcp, socket, _data}, %{socket: socket} = state) do
     :inet.setopts(socket, active: :once)
     {:noreply, state}
@@ -66,42 +89,24 @@ defmodule LiveMeter.TCPClient do
     :ok
   end
 
-  # A slow client can fall behind the emission rate; only the latest telegram
-  # matters, so queued stream casts are replaced by the newest one.
-  defp drop_stale_telegrams(telegram_string) do
-    receive do
-      {:"$gen_cast", {:stream, newer}} -> drop_stale_telegrams(newer)
-    after
-      0 -> telegram_string
-    end
+  defp advance_stream(%{remaining: [], next: next} = state) when next != nil do
+    %{state | remaining: next, next: nil}
   end
 
-  defp stream_lines(_socket, [], _line_delay), do: :ok
+  defp advance_stream(state), do: state
 
-  defp stream_lines(socket, [line | remaining], line_delay) do
-    case :gen_tcp.send(socket, line) do
-      :ok ->
-        sleep(line_delay, line)
-        stream_lines(socket, remaining, line_delay)
+  defp delay_for(0, _line), do: 0
 
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-
-  defp sleep(0, _line), do: :ok
-
-  defp sleep({:baud, baud_rate}, line) when is_integer(baud_rate) and baud_rate > 0 do
+  defp delay_for({:baud, baud_rate}, line) when is_integer(baud_rate) and baud_rate > 0 do
     line
     |> byte_size()
     |> Kernel.*(10_000)
     |> ceil_div(baud_rate)
     |> max(1)
-    |> Process.sleep()
   end
 
-  defp sleep(delay, _line) when is_integer(delay) and delay > 0 do
-    Process.sleep(delay)
+  defp delay_for(delay, _line) when is_integer(delay) and delay > 0 do
+    delay
   end
 
   defp split_lines("", []), do: []
