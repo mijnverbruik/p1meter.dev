@@ -109,7 +109,7 @@ defmodule LiveMeter.SmartMeter do
         {0.0, state.electricity_returned_1, state.electricity_returned_2}
       end
 
-    gas_increment = if minute == 0, do: 0.2, else: 0.0
+    gas_increment = if virtual_time.hour != state.virtual_time.hour, do: 0.2, else: 0.0
 
     Map.merge(state, %{
       virtual_time: virtual_time,

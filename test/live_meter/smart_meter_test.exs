@@ -73,6 +73,34 @@ defmodule LiveMeter.SmartMeterTest do
     assert telegram.measured_at.value == ~N[2026-05-12 12:00:01]
   end
 
+  test "gas is incremented once when virtual time crosses an hour boundary" do
+    name = unique_name("smart-meter")
+    topic = unique_topic("smart-meter")
+
+    :ok = Telegrams.subscribe(topic)
+
+    start_supervised!(
+      {SmartMeter,
+       name: name,
+       interval: 1_000,
+       pubsub_topic: topic,
+       virtual_time: ~N[2026-05-12 12:59:59],
+       gas_delivered: 30.0}
+    )
+
+    server = Process.whereis(name)
+
+    send(server, :emit_telegram)
+    assert_receive {:smart_meter_telegram, telegram, _telegram_string}, 1_000
+    assert telegram.measured_at.value == ~N[2026-05-12 13:00:00]
+    assert gas_value(telegram) == 30.2
+
+    send(server, :emit_telegram)
+    assert_receive {:smart_meter_telegram, telegram, _telegram_string}, 1_000
+    assert telegram.measured_at.value == ~N[2026-05-12 13:00:01]
+    assert gas_value(telegram) == 30.2
+  end
+
   test "readings formats a telegram for the meter display" do
     name = unique_name("smart-meter")
 
@@ -98,6 +126,11 @@ defmodule LiveMeter.SmartMeterTest do
 
     assert %{value: "00030.000", unit: "m³"} =
              Enum.find(payload.readings, &(&1.obis == "0-1:24.2.1"))
+  end
+
+  defp gas_value(telegram) do
+    [%{last_reading_value: %{value: value}} | _] = telegram.mbus_devices
+    value
   end
 
   defp wait_until_registered(name) do
