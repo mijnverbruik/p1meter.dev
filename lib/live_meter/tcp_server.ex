@@ -112,7 +112,7 @@ defmodule LiveMeter.TCPServer do
 
   @impl true
   def terminate(_reason, state) do
-    Enum.each(state.clients, fn client -> GenServer.stop(client.pid) end)
+    Enum.each(state.clients, fn client -> :gen_tcp.close(client.socket) end)
     :gen_tcp.close(state.listen_socket)
     :ok
   end
