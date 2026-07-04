@@ -245,6 +245,15 @@ defmodule LiveMeterWeb.HomeLive do
 
   @example_ids Enum.map(@developer_examples, & &1.id)
 
+  @highlighted_examples Enum.map(@developer_examples, fn example ->
+                          example
+                          |> Map.put(
+                            :code,
+                            CodeHighlight.highlight(example.source, example.language)
+                          )
+                          |> Map.delete(:source)
+                        end)
+
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -253,19 +262,12 @@ defmodule LiveMeterWeb.HomeLive do
 
     snapshot = latest_snapshot()
 
-    examples =
-      Enum.map(@developer_examples, fn example ->
-        example
-        |> Map.put(:code, CodeHighlight.highlight(example.source, example.language))
-        |> Map.delete(:source)
-      end)
-
     {:ok,
      socket
      |> assign(:page_title, "p1meter.dev — Virtual P1 Simulator")
      |> assign(:is_connected, connected?(socket))
      |> assign(:current_index, 0)
-     |> assign(:developer_examples, examples)
+     |> assign(:developer_examples, @highlighted_examples)
      |> assign(:current_example_id, hd(@example_ids))
      |> assign_snapshot(snapshot)}
   end
