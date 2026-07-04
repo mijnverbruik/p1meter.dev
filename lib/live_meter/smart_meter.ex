@@ -45,6 +45,8 @@ defmodule LiveMeter.SmartMeter do
       electricity_returned_1: Keyword.get(opts, :electricity_returned_1, 123.456),
       electricity_returned_2: Keyword.get(opts, :electricity_returned_2, 234.567),
       gas_delivered: Keyword.get(opts, :gas_delivered, 987.654),
+      current_power: 0.0,
+      current_returned: 0.0,
       latest_telegram: nil,
       latest_telegram_string: nil
     }
@@ -133,9 +135,11 @@ defmodule LiveMeter.SmartMeter do
 
   defp put_latest_telegram(state) do
     telegram = build_telegram(state)
-    checksum = checksum_for(telegram)
+    [body, _placeholder] = telegram |> Telegram.to_string() |> String.split("!", parts: 2)
+    checksum = DSMR.CRC16.checksum(body <> "!")
+
     telegram = %{telegram | checksum: checksum}
-    telegram_string = Telegram.to_string(telegram)
+    telegram_string = body <> "!" <> checksum <> "\r\n"
 
     %{state | latest_telegram: telegram, latest_telegram_string: telegram_string}
   end
@@ -153,8 +157,8 @@ defmodule LiveMeter.SmartMeter do
       electricity_returned_1: measurement(state.electricity_returned_1, "kWh"),
       electricity_returned_2: measurement(state.electricity_returned_2, "kWh"),
       electricity_tariff_indicator: if(night_tariff?(hour), do: "0002", else: "0001"),
-      electricity_currently_delivered: measurement(Map.get(state, :current_power, 0.0), "kW"),
-      electricity_currently_returned: measurement(Map.get(state, :current_returned, 0.0), "kW"),
+      electricity_currently_delivered: measurement(state.current_power, "kW"),
+      electricity_currently_returned: measurement(state.current_returned, "kW"),
       power_failures_count: "0",
       power_failures_long_count: "0",
       voltage_sags_l1_count: "0",
@@ -170,15 +174,6 @@ defmodule LiveMeter.SmartMeter do
       ],
       checksum: "0000"
     }
-  end
-
-  defp checksum_for(%Telegram{} = telegram) do
-    telegram
-    |> Telegram.to_string()
-    |> String.split("!", parts: 2)
-    |> List.first()
-    |> Kernel.<>("!")
-    |> DSMR.CRC16.checksum()
   end
 
   defp measurement(value, unit) do
