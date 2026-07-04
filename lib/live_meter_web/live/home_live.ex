@@ -328,10 +328,6 @@ defmodule LiveMeterWeb.HomeLive do
   def handle_event("select_example", _params, socket), do: {:noreply, socket}
 
   @impl true
-  def handle_info({:smart_meter_telegram, nil, telegram_string}, socket) do
-    {:noreply, assign(socket, :raw_telegram, telegram_string)}
-  end
-
   def handle_info({:smart_meter_telegram, telegram, telegram_string}, socket) do
     {:noreply,
      socket

@@ -20,9 +20,10 @@ defmodule LiveMeter.TCPServer do
     end
   end
 
-  def broadcast(server \\ @default_name, telegram_string) when is_binary(telegram_string) do
-    topic = GenServer.call(server, :pubsub_topic)
-    Telegrams.broadcast_telegram(nil, telegram_string, topic)
+  def broadcast(telegram_string, topic \\ Telegrams.topic()) when is_binary(telegram_string) do
+    with {:ok, telegram} <- DSMR.parse(telegram_string) do
+      Telegrams.broadcast_telegram(telegram, telegram_string, topic)
+    end
   end
 
   def port(server \\ @default_name) do
@@ -74,10 +75,6 @@ defmodule LiveMeter.TCPServer do
   @impl true
   def handle_call(:port, _from, state) do
     {:reply, state.port, state}
-  end
-
-  def handle_call(:pubsub_topic, _from, state) do
-    {:reply, state.pubsub_topic, state}
   end
 
   @impl true
