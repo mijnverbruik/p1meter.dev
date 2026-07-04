@@ -213,79 +213,33 @@ defmodule LiveMeterWeb.HomeLive do
   !A1B2
   """
 
+  @examples_dir Path.expand("../../../priv/examples", __DIR__)
+
+  @external_resource Path.join(@examples_dir, "client.js")
+  @external_resource Path.join(@examples_dir, "client.py")
+  @external_resource Path.join(@examples_dir, "client.go")
+
   @developer_examples [
     %{
       id: "node",
       label: "Node.js",
       filename: "client.js",
       language: "JavaScript",
-      source: """
-      const net = require('net');
-
-      const client = new net.Socket();
-      client.connect(8080, 'p1meter.dev', () => {
-        console.log('Connected to Smart Meter P1 Stream');
-      });
-
-      client.on('data', (data) => {
-        // Raw telegram data (DSMR 5.0 format)
-        console.log(data.toString());
-      });
-
-      client.on('close', () => {
-        console.log('Connection closed');
-      });
-      """
+      source: File.read!(Path.join(@examples_dir, "client.js"))
     },
     %{
       id: "python",
       label: "Python",
       filename: "client.py",
       language: "Python",
-      source: """
-      import socket
-
-      sock = socket.create_connection(("p1meter.dev", 8080))
-      print("Connected to Smart Meter P1 Stream")
-
-      try:
-          while data := sock.recv(4096):
-              # Raw telegram data (DSMR 5.0 format)
-              print(data.decode(), end="")
-      finally:
-          sock.close()
-          print("Connection closed")
-      """
+      source: File.read!(Path.join(@examples_dir, "client.py"))
     },
     %{
       id: "go",
       label: "Go",
       filename: "client.go",
       language: "Go",
-      source: """
-      package main
-
-      import (
-      	"fmt"
-      	"io"
-      	"net"
-      	"os"
-      )
-
-      func main() {
-      	conn, err := net.Dial("tcp", "p1meter.dev:8080")
-      	if err != nil {
-      		fmt.Fprintln(os.Stderr, err)
-      		os.Exit(1)
-      	}
-      	defer conn.Close()
-
-      	fmt.Println("Connected to Smart Meter P1 Stream")
-
-      	// Raw telegram data (DSMR 5.0 format)
-      	io.Copy(os.Stdout, conn)
-      }
-      """
+      source: File.read!(Path.join(@examples_dir, "client.go"))
     }
   ]
 
