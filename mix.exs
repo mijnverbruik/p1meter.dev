@@ -41,7 +41,7 @@ defmodule LiveMeter.MixProject do
   defp deps do
     [
       {:bandit, "~> 1.5"},
-      {:dns_cluster, "~> 0.2.0"},
+      {:dns_cluster, "~> 0.3.0"},
       {:decimal, "~> 2.0"},
       {:dsmr, "~> 1.0"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
