@@ -68,13 +68,11 @@ defmodule LiveMeterWeb.HomeLive do
       >
         {@title}
         <span :if={@live?} class="relative flex h-2.5 w-2.5" aria-hidden="true">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75">
-          </span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
         </span>
       </h2>
-      <span class="flex-1 border-t border-dashed border-neutral-200 dark:border-neutral-800 self-center">
-      </span>
+      <span class="flex-1 border-t border-dashed border-neutral-200 dark:border-neutral-800 self-center"></span>
     </div>
     """
   end
